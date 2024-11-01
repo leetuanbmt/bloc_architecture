@@ -2,25 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
-enum ApiErrorType {
-  noInternet,
-  unauthorized,
-  badRequest,
-  forbidden,
-  connectionTimeout,
-  sendTimeout,
-  receiveTimeout,
-  badGateway,
-  serviceUnavailable,
-  cancel,
-  connectionError,
-  tooManyRequests,
-  contentNotAcceptable,
-  notFound,
-  serverError,
-  unknown,
-  response,
-}
+import 'error_type.dart';
 
 class ResponseCode {
   static const int ok = 200;

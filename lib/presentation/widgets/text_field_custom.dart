@@ -240,7 +240,7 @@ class TextFieldCustom extends HookWidget {
           borderRadius: BorderRadius.all(Radius.circular(radius)),
           borderSide: showFocusedBorder
               ? BorderSide(
-                  color: context.appColor.labelColor ?? Colors.white,
+                  color: context.primary,
                   width: 1,
                 )
               : BorderSide.none,
@@ -278,7 +278,7 @@ class TextFieldCustom extends HookWidget {
                 hintText: hintText,
                 filled: filled,
                 isDense: isDense,
-                fillColor: fillColor ?? Colors.white,
+                fillColor: fillColor,
                 prefixIconConstraints: prefixIconConstraints ??
                     const BoxConstraints(
                       minWidth: 44,

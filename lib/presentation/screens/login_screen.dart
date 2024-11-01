@@ -1,9 +1,11 @@
-import 'package:flutter/foundation.dart';
-
-import '../../blocs/authentication/authentication_bloc.dart';
+import '../../blocs/login/login_bloc.dart';
 import '../../core/config.dart';
+import '../../core/hooks/utils/use_brightness_value.dart';
 import '../../core/routes/app_routes.gr.dart';
+import '../../core/services/injection_container.dart';
+import '../../domain/usecases/login_user.dart';
 import '../widgets/button_custom.dart';
+import '../widgets/common/base_page_state.dart';
 import '../widgets/text_field_custom.dart';
 
 /// The login screen.
@@ -16,7 +18,7 @@ import '../widgets/text_field_custom.dart';
 ///
 /// If the login is unsuccessful, the user will be shown an error message.
 @RoutePage(name: 'LoginRoute')
-class LoginScreen extends HookWidget {
+class LoginScreen extends StatefulHookWidget {
   /// Creates a new instance of the [LoginScreen] widget.
   ///
   /// The [onResult] callback is called when the user logs in or out.
@@ -26,7 +28,12 @@ class LoginScreen extends HookWidget {
   final Function(bool didLogin)? onResult;
 
   @override
-  Widget build(BuildContext context) {
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends BasePageState<LoginScreen, LoginBloc> {
+  @override
+  Widget buildPage(BuildContext context) {
     /// The form key.
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
@@ -51,10 +58,10 @@ class LoginScreen extends HookWidget {
     useEffect(
       () {
         /// If the app is in debug mode, set the username and password to default values.
-        if (kDebugMode) {
-          username.text = 'emilys';
-          password.text = 'emilyspass';
-        }
+        // if (kDebugMode) {
+        username.text = 'emilys';
+        password.text = 'emilyspass';
+        // }
 
         /// Update the state and add listeners to the controllers.
         checkFieldsEmpty.value = areFieldsEmpty();
@@ -67,117 +74,124 @@ class LoginScreen extends HookWidget {
           password.removeListener(listener);
         };
       },
-      [username, password],
+      [],
     );
-
-    /// The BlocConsumer that listens to the authentication bloc.
-    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
-      /// The listener that handles the authentication state.
+    return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        /// If the login is successful, navigate to the dashboard.
-        if (state.isAuthenticated) {
-          AutoRouter.of(context).pushAndPopUntil(
-            const DashboardRoute(),
-            predicate: (route) => false,
-          );
+        if (state.isSuccessful) {
+          if (widget.onResult != null) {
+            widget.onResult!(true);
+          } else {
+            AutoRouter.of(context).pushAndPopUntil(
+              const DashboardRoute(),
+              predicate: (route) => false,
+            );
+          }
         }
       },
-
-      /// The builder that builds the widget based on the authentication state.
-      builder: (context, state) {
-        return Scaffold(
-          /// Prevent the scaffold from resizing to avoid the bottom inset.
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            /// Set the background gradient.
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          /// Set the background gradient.
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: useBrightnessValue(
+                light: const [
                   Color.fromARGB(255, 164, 194, 236),
                   Color(0xFFE0E0E0),
                 ],
+                dark: const [
+                  Color.fromARGB(132, 205, 161, 161),
+                  Color(0xFF121212),
+                ],
               ),
             ),
+          ),
 
-            /// Center the content of the screen.
-            child: Center(
-              child: Padding(
-                /// Add padding to the content.
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  /// Set the form key.
-                  key: formKey,
-                  child: Column(
-                    /// Set the main axis size to minimum.
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      /// Display the Flutter logo.
-                      const Center(child: FlutterLogo(size: 100)),
-                      HeightBox(20.h),
+          /// Center the content of the screen.
+          child: Center(
+            child: Padding(
+              /// Add padding to the content.
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                /// Set the form key.
+                key: formKey,
+                child: Column(
+                  /// Set the main axis size to minimum.
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    /// Display the Flutter logo.
+                    const Center(child: FlutterLogo(size: 100)),
+                    HeightBox(20.h),
 
-                      /// Display the login title.
-                      TextApp.bold(
-                        LocaleKeys.loginTitle.tr(),
-                        type: TextType.xxlg,
-                      ),
-                      HeightBox(8.h),
+                    /// Display the login title.
+                    TextApp.bold(
+                      context.tr(LocaleKeys.loginTitle),
+                      type: TextType.xxlg,
+                    ),
+                    HeightBox(8.h),
 
-                      /// Display the login description.
-                      TextApp(
-                        LocaleKeys.loginDescription.tr(),
-                        textAlign: TextAlign.center,
-                      ),
-                      HeightBox(20.h),
+                    /// Display the login description.
+                    TextApp(
+                      context.tr(LocaleKeys.loginDescription),
+                      textAlign: TextAlign.center,
+                    ),
+                    HeightBox(20.h),
 
-                      /// Display the username text field.
-                      TextFieldCustom(
-                        controller: username,
-                        hintText: LocaleKeys.loginUsername.tr(),
-                        keyboardType: TextInputType.emailAddress,
-                        prefixIcon: Assets.iconsMail.svg(),
-                      ),
-                      SizedBox(height: 16.h),
+                    /// Display the username text field.
+                    TextFieldCustom(
+                      controller: username,
+                      hintText: context.tr(LocaleKeys.loginUsername),
+                      keyboardType: TextInputType.emailAddress,
+                      prefixIcon: Assets.iconsMail.svg(),
+                    ),
+                    SizedBox(height: 16.h),
 
-                      /// Display the password text field.
-                      TextFieldCustom(
-                        controller: password,
-                        hintText: LocaleKeys.loginPassword.tr(),
-                        obscureText: true,
-                        prefixIcon: Assets.iconsLock.svg(),
-                        errorText: state is AuthenticationLoginFailure
-                            ? state.message
-                            : null,
-                      ),
-                      SizedBox(height: 24.h),
+                    /// Display the password text field.
+                    BlocSelector<LoginBloc, LoginState, String?>(
+                      selector: (state) => state.errorMessage,
+                      builder: (context, state) {
+                        return TextFieldCustom(
+                          controller: password,
+                          hintText: context.tr(LocaleKeys.loginPassword),
+                          obscureText: true,
+                          prefixIcon: Assets.iconsLock.svg(),
+                          errorText: state,
+                        );
+                      },
+                    ),
+                    SizedBox(height: 24.h),
 
-                      /// Display the login button.
-                      GradientButton(
-                        text: LocaleKeys.loginButton.tr(),
-                        onPressed: checkFieldsEmpty.value
-                            ? null
-                            : () {
-                                /// Validate the form.
-                                if (formKey.currentState!.validate()) {
-                                  /// Dispatch the login event to the authentication bloc.
-                                  context.read<AuthenticationBloc>().add(
-                                        AuthenticationLoginEvent(
-                                          username.text,
-                                          password.text,
-                                        ),
-                                      );
-                                }
-                              },
-                      ),
-                    ],
-                  ),
+                    /// Display the login button.
+                    GradientButton(
+                      text: context.tr(LocaleKeys.loginButton),
+                      onPressed: checkFieldsEmpty.value
+                          ? null
+                          : () {
+                              /// Validate the form.
+                              if (formKey.currentState!.validate()) {
+                                /// Dispatch the login event to the authentication bloc.
+                                bloc.add(
+                                  LoginEvent.login(
+                                    username.text,
+                                    password.text,
+                                  ),
+                                );
+                              }
+                            },
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  @override
+  LoginBloc createBloc() => LoginBloc(getIt<LoginUser>());
 }

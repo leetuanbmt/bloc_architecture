@@ -1,9 +1,8 @@
 part of 'user_bloc.dart';
 
-sealed class UserEvent extends BaseEvent {
-  const UserEvent();
-}
-
-class UserGetEvent extends UserEvent {
-  const UserGetEvent();
+@freezed
+class UserEvent extends BaseEvent with _$UserEvent {
+  const factory UserEvent.getUser() = _GetUser;
+  const factory UserEvent.loadMore() = _LoadMore;
+  const factory UserEvent.pullRefresh(Completer<void> completer) = _PullRefresh;
 }

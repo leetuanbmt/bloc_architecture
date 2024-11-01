@@ -1,11 +1,9 @@
-import '../../core/mixin/api_error_handler_mixin.dart';
 import '../../core/usecase/usecase.dart';
 import '../../core/utilities/typedef.dart';
 import '../entities/user.dart';
 import '../repositories/authentication_repository.dart';
 
-class LoginUser extends UsecaseWithParams<User, LoginParam>
-    with ApiErrorHandlerMixin {
+class LoginUser extends UsecaseWithParams<User, LoginParam> {
   LoginUser(this._repository);
   final AuthenticationRepository _repository;
 

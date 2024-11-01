@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../blocs/authentication/authentication_bloc.dart';
@@ -12,12 +13,12 @@ import '../../data/repositories/authentication_repository_impl.dart';
 import '../../data/repositories/user_repository_impl.dart';
 import '../../domain/repositories/authentication_repository.dart';
 import '../../domain/repositories/user_repository.dart';
-import '../../domain/usecases/check_authentication.dart';
 import '../../domain/usecases/create_user.dart';
 import '../../domain/usecases/get_users.dart';
 import '../../domain/usecases/login_user.dart';
 import '../../domain/usecases/logout_user.dart';
 import '../config.dart';
+import '../network/connection_checker.dart';
 import '../utilities/preferences.dart';
 import 'auth_service.dart';
 import 'user_service.dart';
@@ -69,12 +70,8 @@ void registerBlocs() {
   getIt
     ..registerLazySingleton(() => CommonBloc())
     ..registerLazySingleton(() => PreferencesBloc())
-    ..registerFactory(
-      () => AuthenticationBloc(
-        loginUser: getIt<LoginUser>(),
-        checkAuthentication: getIt<CheckAuthentication>(),
-        logoutUser: getIt<LogoutUser>(),
-      ),
+    ..registerLazySingleton(
+      () => AuthenticationBloc(getIt<LogoutUser>()),
     );
 }
 
@@ -82,8 +79,7 @@ void registerBlocs() {
 void registerUseCases() {
   getIt
     ..registerLazySingleton(() => LoginUser(getIt()))
-    ..registerLazySingleton(() => LogoutUser(getIt()))
-    ..registerLazySingleton(() => CheckAuthentication(getIt()));
+    ..registerLazySingleton(() => LogoutUser(getIt()));
 }
 
 /// Registers all repositories in the dependency injection container.
@@ -106,18 +102,20 @@ void registerExternal() {
     ..registerLazySingleton(() => secureStorage)
     ..registerLazySingleton(() => dio)
     ..registerLazySingleton(() => AuthService(dio))
-    ..registerLazySingleton(() => UserService(dio));
+    ..registerLazySingleton(() => UserService(dio))
+    ..registerFactory(() => InternetConnection())
+    ..registerFactory<ConnectionChecker>(() => ConnectionCheckerImpl(getIt()));
 }
 
 /// Registers all user management dependencies in the dependency injection container.
 void registerUserManagement() {
   getIt
-    ..registerFactory<UserRemoteDataSource>(
+    ..registerLazySingleton<UserRemoteDataSource>(
       () => UserRemoteDataSource(getIt<UserService>()),
     )
-    ..registerFactory<UserRepository>(
+    ..registerLazySingleton<UserRepository>(
       () => UserRepositoryImpl(getIt<UserRemoteDataSource>()),
     )
-    ..registerFactory(() => CreateUser(getIt<UserRepository>()))
-    ..registerFactory(() => GetUsers(getIt<UserRepository>()));
+    ..registerLazySingleton(() => CreateUser(getIt<UserRepository>()))
+    ..registerLazySingleton(() => GetUsers(getIt<UserRepository>()));
 }

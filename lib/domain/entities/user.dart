@@ -17,6 +17,8 @@ class User with _$User {
     String? image,
     String? accessToken,
     String? refreshToken,
+    String? birthDate,
+    String? phone,
   }) = _User;
 
   factory User.fromJson(JsonMapping json) => _$UserFromJson(json);
@@ -29,11 +31,25 @@ class UserListResponse with _$UserListResponse {
   const UserListResponse._();
   const factory UserListResponse({
     required List<User> users,
-    required int total,
-    required int skip,
-    required int limit,
+    @Default(0) int total,
+    @Default(0) int skip,
+    @Default(0) int limit,
   }) = _UserListResponse;
 
   factory UserListResponse.fromJson(JsonMapping json) =>
       _$UserListResponseFromJson(json);
+
+  factory UserListResponse.merge(
+    UserListResponse oldData,
+    UserListResponse newData,
+  ) {
+    return UserListResponse(
+      users: [...oldData.users, ...newData.users],
+      total: newData.total,
+      skip: newData.skip,
+      limit: newData.limit,
+    );
+  }
+
+  bool get hasMore => users.length < total;
 }

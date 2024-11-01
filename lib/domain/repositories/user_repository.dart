@@ -28,5 +28,8 @@ abstract class UserRepository {
   /// final userRepository = UserRepository();
   /// final result = userRepository.getUsers();
   /// ```
-  ResultFuture<UserListResponse> getUsers();
+  ResultFuture<UserListResponse> getUsers({
+    int limit = 10,
+    int skip = 0,
+  });
 }

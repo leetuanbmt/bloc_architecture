@@ -1,36 +1,51 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/services/injection_container.dart';
-import '../../core/utilities/logger.dart';
 import '../common/common_bloc.dart';
 import 'base_event.dart';
+import 'mixin/log_mixin.dart';
 
-/// Base Bloc class for all blocs in the application.
+/// Base class for all blocs.
 ///
-/// This class provides a common structure for all blocs, including:
-/// - A default event handler that handles common events like `InitialEvent`, `RefreshEvent`, `ResumeEvent`, and `InActiveEvent`.
-/// - Methods for handling specific events like `onInit`, `onRefresh`, `handleEvent`, `onResume`, and `onInActive`.
-/// - A `close` method that logs a message when the bloc is closed.
-abstract class BaseBloc<S extends BaseEvent, T> extends Bloc<S, T> {
-  /// Constructor for the BaseBloc class.
-  ///
-  /// Takes the initial state of the bloc as an argument.
+/// This class provides common functionality for all blocs, such as logging,
+/// loading state management, and closing the bloc.
+abstract class BaseBloc<S extends BaseEvent, T> extends Bloc<S, T>
+    with LogMixin {
+  /// Creates a new instance of [BaseBloc].
   BaseBloc(super.initialState);
 
-  /// Called when the bloc is closed.
-  ///
-  /// This method logs a message when the bloc is closed.
+  /// Closes the bloc and logs a message.
   @override
   Future<void> close() {
-    Logger.log(toString(), tag: 'Bloc is close');
+    log(toString(), tag: 'Bloc is close');
     return super.close();
   }
 
+  /// Starts the loading state.
+  ///
+  /// This method adds a [CommonEvent.loadingVisibility] event to the
+  /// [CommonBloc] to show the loading indicator.
   void startLoading() {
-    getIt<CommonBloc>().add(const LoadingVisibilityEvent(isLoading: true));
+    getIt<CommonBloc>().add(const CommonEvent.loadingVisibility(true));
   }
 
+  /// Stops the loading state.
+  ///
+  /// This method adds a [CommonEvent.loadingVisibility] event to the
+  /// [CommonBloc] to hide the loading indicator.
   void stopLoading() {
-    getIt<CommonBloc>().add(const LoadingVisibilityEvent(isLoading: false));
+    getIt<CommonBloc>().add(const CommonEvent.loadingVisibility(false));
+  }
+
+  /// Base function that can be implemented by child blocs.
+  ///
+  /// This method can be used to perform common actions, such as fetching data
+  /// from an API.
+  Future<void> fetch(
+    Future<void> Function() fetchFunction,
+  ) async {
+    startLoading();
+    await fetchFunction();
+    stopLoading();
   }
 }

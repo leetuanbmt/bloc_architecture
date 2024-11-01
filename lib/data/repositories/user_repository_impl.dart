@@ -33,8 +33,12 @@ class UserRepositoryImpl extends UserRepository {
   ///
   /// **Example:**
   /// ```dart
-  /// final users = await userRepository.getUsers();
+  /// final users = await userRepository.getUsers(limit: 10, skip: 0);
   /// ```
   @override
-  ResultFuture<UserListResponse> getUsers() => remoteDataSource.getUsers();
+  ResultFuture<UserListResponse> getUsers({
+    int limit = 10,
+    int skip = 0,
+  }) =>
+      remoteDataSource.getUsers(limit: limit, skip: skip);
 }

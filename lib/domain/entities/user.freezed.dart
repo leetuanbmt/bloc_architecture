@@ -29,6 +29,8 @@ mixin _$User {
   String? get image => throw _privateConstructorUsedError;
   String? get accessToken => throw _privateConstructorUsedError;
   String? get refreshToken => throw _privateConstructorUsedError;
+  String? get birthDate => throw _privateConstructorUsedError;
+  String? get phone => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,7 +55,9 @@ abstract class $UserCopyWith<$Res> {
       String? gender,
       String? image,
       String? accessToken,
-      String? refreshToken});
+      String? refreshToken,
+      String? birthDate,
+      String? phone});
 }
 
 /// @nodoc
@@ -80,6 +84,8 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? image = freezed,
     Object? accessToken = freezed,
     Object? refreshToken = freezed,
+    Object? birthDate = freezed,
+    Object? phone = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -118,6 +124,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
               as String?,
+      birthDate: freezed == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -138,7 +152,9 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String? gender,
       String? image,
       String? accessToken,
-      String? refreshToken});
+      String? refreshToken,
+      String? birthDate,
+      String? phone});
 }
 
 /// @nodoc
@@ -162,6 +178,8 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? image = freezed,
     Object? accessToken = freezed,
     Object? refreshToken = freezed,
+    Object? birthDate = freezed,
+    Object? phone = freezed,
   }) {
     return _then(_$UserImpl(
       id: freezed == id
@@ -200,6 +218,14 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
               as String?,
+      birthDate: freezed == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -216,7 +242,9 @@ class _$UserImpl extends _User {
       this.gender,
       this.image,
       this.accessToken,
-      this.refreshToken})
+      this.refreshToken,
+      this.birthDate,
+      this.phone})
       : super._();
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -240,10 +268,14 @@ class _$UserImpl extends _User {
   final String? accessToken;
   @override
   final String? refreshToken;
+  @override
+  final String? birthDate;
+  @override
+  final String? phone;
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, firstName: $firstName, lastName: $lastName, gender: $gender, image: $image, accessToken: $accessToken, refreshToken: $refreshToken)';
+    return 'User(id: $id, username: $username, email: $email, firstName: $firstName, lastName: $lastName, gender: $gender, image: $image, accessToken: $accessToken, refreshToken: $refreshToken, birthDate: $birthDate, phone: $phone)';
   }
 
   @override
@@ -264,13 +296,16 @@ class _$UserImpl extends _User {
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
             (identical(other.refreshToken, refreshToken) ||
-                other.refreshToken == refreshToken));
+                other.refreshToken == refreshToken) &&
+            (identical(other.birthDate, birthDate) ||
+                other.birthDate == birthDate) &&
+            (identical(other.phone, phone) || other.phone == phone));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, username, email, firstName,
-      lastName, gender, image, accessToken, refreshToken);
+      lastName, gender, image, accessToken, refreshToken, birthDate, phone);
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -298,7 +333,9 @@ abstract class _User extends User {
       final String? gender,
       final String? image,
       final String? accessToken,
-      final String? refreshToken}) = _$UserImpl;
+      final String? refreshToken,
+      final String? birthDate,
+      final String? phone}) = _$UserImpl;
   const _User._() : super._();
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
@@ -321,6 +358,10 @@ abstract class _User extends User {
   String? get accessToken;
   @override
   String? get refreshToken;
+  @override
+  String? get birthDate;
+  @override
+  String? get phone;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -456,9 +497,9 @@ class __$$UserListResponseImplCopyWithImpl<$Res>
 class _$UserListResponseImpl extends _UserListResponse {
   const _$UserListResponseImpl(
       {required final List<User> users,
-      required this.total,
-      required this.skip,
-      required this.limit})
+      this.total = 0,
+      this.skip = 0,
+      this.limit = 0})
       : _users = users,
         super._();
 
@@ -474,10 +515,13 @@ class _$UserListResponseImpl extends _UserListResponse {
   }
 
   @override
+  @JsonKey()
   final int total;
   @override
+  @JsonKey()
   final int skip;
   @override
+  @JsonKey()
   final int limit;
 
   @override
@@ -521,9 +565,9 @@ class _$UserListResponseImpl extends _UserListResponse {
 abstract class _UserListResponse extends UserListResponse {
   const factory _UserListResponse(
       {required final List<User> users,
-      required final int total,
-      required final int skip,
-      required final int limit}) = _$UserListResponseImpl;
+      final int total,
+      final int skip,
+      final int limit}) = _$UserListResponseImpl;
   const _UserListResponse._() : super._();
 
   factory _UserListResponse.fromJson(Map<String, dynamic> json) =

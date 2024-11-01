@@ -19,6 +19,8 @@ abstract class PrimitiveUtils {
   static final Random _random = Random();
 
   /// Returns a random element from the given list.
+  /// example: getRandomElement([1, 2, 3, 4, 5]) returns 3
+  /// example: getRandomElement(['a', 'b', 'c', 'd', 'e']) returns 'c'
   static T getRandomElement<T>(List<T> list) {
     return list[_random.nextInt(list.length)];
   }

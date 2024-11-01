@@ -94,14 +94,14 @@ The following aspects are considered to ensure good quality and high-performance
 
 - [ ] 13.1 Code changes do not impact the system performance in a negative way
 
-<h1 align="center">Hi 👋, I'm Van Minh Tuan</h1>
-<h3 align="center">Looking for a ambitious and professional working environment to perform and exlpore my more than 8-year experience in fullstack and mobile development.</h3>
-
 #### Generate language
 
 ```
 dart run bloc_architecture:generate
 ```
+
+<h1 align="center">Hi 👋, I'm Van Minh Tuan</h1>
+<h3 align="center">Looking for a ambitious and professional working environment to perform and exlpore my more than 8-year experience in fullstack and mobile development.</h3>
 
 - 📫 How to reach me **leetuanbmt@gmail.com**
 

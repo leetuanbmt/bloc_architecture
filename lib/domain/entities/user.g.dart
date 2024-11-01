@@ -16,6 +16,8 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       image: json['image'] as String?,
       accessToken: json['accessToken'] as String?,
       refreshToken: json['refreshToken'] as String?,
+      birthDate: json['birthDate'] as String?,
+      phone: json['phone'] as String?,
     );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) {
@@ -36,6 +38,8 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) {
   writeNotNull('image', instance.image);
   writeNotNull('accessToken', instance.accessToken);
   writeNotNull('refreshToken', instance.refreshToken);
+  writeNotNull('birthDate', instance.birthDate);
+  writeNotNull('phone', instance.phone);
   return val;
 }
 
@@ -45,9 +49,9 @@ _$UserListResponseImpl _$$UserListResponseImplFromJson(
       users: (json['users'] as List<dynamic>)
           .map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
-      total: (json['total'] as num).toInt(),
-      skip: (json['skip'] as num).toInt(),
-      limit: (json['limit'] as num).toInt(),
+      total: (json['total'] as num?)?.toInt() ?? 0,
+      skip: (json['skip'] as num?)?.toInt() ?? 0,
+      limit: (json['limit'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$UserListResponseImplToJson(

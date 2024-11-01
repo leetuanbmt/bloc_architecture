@@ -9,3 +9,4 @@ targets:
           include_if_null: false
           explicit_to_json: true
           generic_argument_factories: false
+          # field_rename: snake

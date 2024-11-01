@@ -1,4 +1,4 @@
-import '../../core/mixin/api_error_handler_mixin.dart';
+import '../../blocs/base/mixin/api_error_handler_mixin.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/utilities/typedef.dart';
 import '../../domain/entities/user.dart';
@@ -7,7 +7,7 @@ const kCreateUserEndpoint = '/users';
 const kGetUsersEndpoint = '/users';
 const kLoginEndpoint = '/auth/login';
 
-class AuthRemoteDataSource with ApiErrorHandlerMixin {
+class AuthRemoteDataSource with ApiHandlerMixin {
   AuthRemoteDataSource(this.authService);
 
   final AuthService authService;
