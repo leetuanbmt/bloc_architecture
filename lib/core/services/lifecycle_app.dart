@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../blocs/common/common_bloc.dart';
+import '../common/common/common_bloc.dart';
 import '../config.dart';
 import 'injection_container.dart';
 
@@ -10,12 +10,12 @@ Future lifecycleApp() async {
     LifecycleEventHandler(
       resumeCallBack: () async {
         getIt<CommonBloc>().add(
-          const CommonEvent.appLifecycle(LifecycleState.resumed),
+          const AppLifecycleEvent(LifecycleState.resumed),
         );
       },
       suspendingCallBack: () async {
         getIt<CommonBloc>().add(
-          const CommonEvent.appLifecycle(LifecycleState.suspended),
+          const AppLifecycleEvent(LifecycleState.suspended),
         );
       },
     ),

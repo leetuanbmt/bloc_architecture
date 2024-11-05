@@ -56,14 +56,14 @@ class _AuthService implements AuthService {
   }
 
   @override
-  Future<void> registerUser(Map<String, dynamic> body) async {
+  Future<User> registerUser(Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body);
-    final _options = _setStreamType<void>(Options(
-      method: 'GET',
+    final _options = _setStreamType<User>(Options(
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
@@ -78,7 +78,15 @@ class _AuthService implements AuthService {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late User _value;
+    try {
+      _value = User.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

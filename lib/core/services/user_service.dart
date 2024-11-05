@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
-import '../../domain/entities/user.dart';
+import '../../features/auth/domain/entities/user.dart';
 import '../utilities/typedef.dart';
 
 part 'user_service.g.dart';
