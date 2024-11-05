@@ -11,18 +11,17 @@
 import 'package:auto_route/auto_route.dart' as _i9;
 import 'package:bloc_architecture/core/config.dart' as _i10;
 import 'package:bloc_architecture/core/routes/app_routes.dart' as _i1;
-import 'package:bloc_architecture/presentation/screens/calendar_screen.dart'
-    as _i2;
-import 'package:bloc_architecture/presentation/screens/chart_screen.dart'
-    as _i3;
-import 'package:bloc_architecture/presentation/screens/dashboard_screen.dart'
-    as _i4;
-import 'package:bloc_architecture/presentation/screens/home_screen.dart' as _i5;
-import 'package:bloc_architecture/presentation/screens/login_screen.dart'
+import 'package:bloc_architecture/features/auth/presentation/page/login_screen.dart'
     as _i6;
-import 'package:bloc_architecture/presentation/screens/setting_screen.dart'
+import 'package:bloc_architecture/features/dashboard/calendar_screen.dart'
+    as _i2;
+import 'package:bloc_architecture/features/dashboard/chart_screen.dart' as _i3;
+import 'package:bloc_architecture/features/dashboard/dashboard_screen.dart'
+    as _i4;
+import 'package:bloc_architecture/features/dashboard/home_screen.dart' as _i5;
+import 'package:bloc_architecture/features/dashboard/setting_screen.dart'
     as _i7;
-import 'package:bloc_architecture/presentation/screens/time_screen.dart' as _i8;
+import 'package:bloc_architecture/features/dashboard/time_screen.dart' as _i8;
 
 /// generated route for
 /// [_i1.CalendarNav]

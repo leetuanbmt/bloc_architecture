@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_localization/app_localization_app.dart';
+import 'common/base/app_bloc_observer.dart';
 import 'config.dart';
+import 'services/injection_container.dart';
 import 'utilities/hive_utils.dart';
 
 export 'package:auto_route/auto_route.dart';
@@ -21,7 +23,7 @@ export '../core/collections/collections.dart';
 export '../core/collections/locale_keys.g.dart';
 export '../core/extensions/extensions.dart';
 export '../core/utilities/logger.dart';
-export '../presentation/widgets/common/title_widget.dart';
+export '../widgets/common/title_widget.dart';
 
 part 'styles/dimensions.dart';
 part 'styles/theme.dart';
@@ -63,7 +65,9 @@ class Configs {
 
     await AppLocalizations.ensureInitialized();
 
-    // Bloc.observer = AppBlocObserver();
+    initInjection();
+
+    Bloc.observer = AppBlocObserver();
 
     runApp();
   }

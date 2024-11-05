@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
-import '../../domain/entities/user.dart';
+import '../../features/auth/domain/entities/user.dart';
 import '../utilities/typedef.dart';
 
 part 'auth_service.g.dart';
@@ -12,6 +12,6 @@ abstract class AuthService {
   @POST('/auth/login')
   Future<User> loginUser(@Body() JsonMapping body);
 
-  @GET('/users')
-  Future<void> registerUser(@Body() JsonMapping body);
+  @POST('/users')
+  Future<User> registerUser(@Body() JsonMapping body);
 }

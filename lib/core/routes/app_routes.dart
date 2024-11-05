@@ -1,4 +1,4 @@
-import '../../blocs/authentication/authentication_bloc.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../config.dart';
 import '../services/injection_container.dart';
 import 'app_routes.gr.dart';
@@ -63,9 +63,7 @@ class AuthGuard extends AutoRouteGuard {
   const AuthGuard();
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
-    final authenticationBloc = getIt<AuthenticationBloc>();
-
-    final isLoginIn = await authenticationBloc.authCheck.future;
+    final isLoginIn = await getIt<AuthBloc>().authCheck.future;
 
     /// List of routes that do not require authentication
     final acceptRoutes = [

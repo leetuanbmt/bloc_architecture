@@ -1,0 +1,133 @@
+
+
+
+# Variable for Build Type - Apk, AAB
+BUILD_APK = 'apk'
+BUILD_AAB = 'appbundle'
+
+# Variable for Build Mode - Debug, Release
+BUILD_DEBUG_MODE = 'debug'
+BUILD_RELEASE_MODE = 'release'
+
+
+
+
+# Variable for I O S
+BUNDLE_APP_ID = 'gzr.bsd.dev'
+
+PROVISIONING_PROFILE_NAME = 'GZR Enterprise AppID InHouse Profile'
+
+EXPORT_METHOD_ENTERPRISE = 'enterprise'
+
+# Variable for Output Name 
+OUTPUT_NAME = 'app-release.ipa'
+
+
+# Variable for Testers Group
+
+TESTERS_GROUP = 'internal-testers'
+
+
+
+# Variable for dirname
+dirname = File.dirname(Dir.getwd)
+
+default_platform(:android)
+
+platform :android do
+  desc "Build ứng dụng Android"
+  lane :build_android do
+    gradle(task: "assembleRelease")
+  end
+end
+
+platform :ios do
+  desc "Build ứng dụng iOS"
+  lane :build_ios do
+    gym(scheme: "Runner")
+  end
+end
+
+# Build and Deploy Lane
+desc "Build both Android and iOS applications, upload to Firebase App Distribution and send notification to chatops channel"
+lane :build_all do |options|
+  # Read environment variables from .env file
+  FIREBASE_APP_ID_ANDROID = File.read("#{dirname}/.env").match(/FIREBASE_APP_ID_ANDROID=(.*)/)[1]
+  FIREBASE_APP_ID_IOS = File.read("#{dirname}/.env").match(/FIREBASE_APP_ID_IOS=(.*)/)[1]
+  FIREBASE_CLI_TOKEN = File.read("#{dirname}/.env").match(/FIREBASE_CLI_TOKEN=(.*)/)[1]
+
+  # Get version and release note from pubspec.yaml and git log
+  version = options[:version] || sh("grep version #{dirname}/pubspec.yaml | cut -d ' ' -f 2")
+  release_notes = options[:note] || sh("git log -1 --pretty=%B")
+
+
+  # Build Android application
+  build_application_android(
+    version: version,
+    build_type: BUILD_APK,
+    build_mode: BUILD_RELEASE_MODE
+  )
+
+  # Build iOS application
+  build_application_ios(version: version)
+
+  # Upload to Firebase App Distribution
+  upload_to_firebase(
+    version: version,
+    firebase_app_id_android: FIREBASE_APP_ID_ANDROID,
+    firebase_app_id_ios: FIREBASE_APP_ID_IOS,
+    firebase_cli_token: FIREBASE_CLI_TOKEN,
+    ipa_file: OUTPUT_NAME,
+    release_notes: release_notes,
+  )
+  # Send notification to chatops channel
+  sh("#{dirname}/scripts/send_notification.sh --version=#{version} --note=\"#{release_notes}\"")
+end
+
+# P R I V A T E   L A N E S
+
+desc "Build APK or AAB"
+lane :build_application_android do |options|
+  version = options[:version]
+  sh("rm -rf #{dirname}/*.apk")
+  sh("flutter build #{options[:build_type]} --#{options[:build_mode]} --build-name=#{version} --no-tree-shake-icons")
+  sh("mv #{dirname}/build/app/outputs/flutter-apk/app-release.apk #{dirname}/app-release.apk")
+end
+
+desc "Build IPA"
+lane :build_application_ios do |options|
+  sh("#{dirname}/scripts/build_ios.sh --version=#{options[:version]}")
+  build_info = build_app(
+    export_method: EXPORT_METHOD_ENTERPRISE,
+    export_options: {
+      provisioningProfiles: {
+        BUNDLE_APP_ID => PROVISIONING_PROFILE_NAME
+      }
+    },
+    output_name: OUTPUT_NAME,
+    xcargs: "PROVISIONING_PROFILE_SPECIFIER='#{PROVISIONING_PROFILE_NAME}'",
+    workspace: "#{dirname}/ios/Runner.xcworkspace"
+  )
+end
+
+desc "Upload the apk file to Firebase App Distribution."
+private_lane :upload_to_firebase do |options|
+  firebase_app_distribution(
+    app: options[:firebase_app_id_android],
+    firebase_cli_token: options[:firebase_cli_token],
+    groups: TESTERS_GROUP,
+    release_notes: options[:release_notes],
+    android_artifact_path: "#{dirname}/app-release.apk",
+    android_artifact_type: "APK",
+    debug: true
+  )
+
+  firebase_app_distribution(
+    app: options[:firebase_app_id_ios],
+    firebase_cli_token: options[:firebase_cli_token],
+    groups: TESTERS_GROUP,
+    release_notes: options[:release_notes],
+    ipa_path: "#{dirname}/#{options[:ipa_file]}",
+    debug: true
+  )
+end

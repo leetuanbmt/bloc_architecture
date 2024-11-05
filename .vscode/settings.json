@@ -9,8 +9,10 @@
         "Subtags",
         "Usecase",
         "usecases",
+        "vi_VN",
+        "writeln",
         "xxlg",
-        "vi_VN"
+        "xxxlg"
     ],
     "cSpell.ignorePaths": [
         "assets/translations/vi_VN.json",
