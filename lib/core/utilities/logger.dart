@@ -5,7 +5,7 @@ import '../config.dart';
 
 class Logger {
   Logger._();
-  static void log(dynamic msg, {String tag = Configs.appName}) {
+  static void log(Object msg, {String tag = Configs.appName}) {
     try {
       dev.log(jsonEncode(msg), name: tag);
     } catch (e) {

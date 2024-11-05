@@ -109,7 +109,7 @@ class GenerateOptions {
   }
 }
 
-void handleLangFiles(GenerateOptions options) async {
+Future<void> handleLangFiles(GenerateOptions options) async {
   final current = Directory.current;
   final source = Directory.fromUri(Uri.parse(options.sourceDir!));
   final output = Directory.fromUri(Uri.parse(options.outputDir!));
@@ -153,7 +153,7 @@ Future<List<FileSystemEntity>> dirContents(Directory dir) {
   return completer.future;
 }
 
-void generateFile(
+Future<void> generateFile(
   List<FileSystemEntity> files,
   Directory outputPath,
   GenerateOptions options,

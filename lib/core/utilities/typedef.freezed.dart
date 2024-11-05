@@ -19,20 +19,20 @@ mixin _$Result<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T data) success,
-    required TResult Function(ApiException error, StackTrace stackTrace)
+    required TResult Function(ApiException error, StackTrace? stackTrace)
         failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T data)? success,
-    TResult? Function(ApiException error, StackTrace stackTrace)? failure,
+    TResult? Function(ApiException error, StackTrace? stackTrace)? failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T data)? success,
-    TResult Function(ApiException error, StackTrace stackTrace)? failure,
+    TResult Function(ApiException error, StackTrace? stackTrace)? failure,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -81,7 +81,7 @@ class _$SuccessImpl<T> extends Success<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T data) success,
-    required TResult Function(ApiException error, StackTrace stackTrace)
+    required TResult Function(ApiException error, StackTrace? stackTrace)
         failure,
   }) {
     return success(data);
@@ -91,7 +91,7 @@ class _$SuccessImpl<T> extends Success<T> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T data)? success,
-    TResult? Function(ApiException error, StackTrace stackTrace)? failure,
+    TResult? Function(ApiException error, StackTrace? stackTrace)? failure,
   }) {
     return success?.call(data);
   }
@@ -100,7 +100,7 @@ class _$SuccessImpl<T> extends Success<T> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T data)? success,
-    TResult Function(ApiException error, StackTrace stackTrace)? failure,
+    TResult Function(ApiException error, StackTrace? stackTrace)? failure,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -142,13 +142,12 @@ abstract class Success<T> extends Result<T> {
 /// @nodoc
 
 class _$FailureImpl<T> extends Failure<T> {
-  const _$FailureImpl({required this.error, required this.stackTrace})
-      : super._();
+  const _$FailureImpl({required this.error, this.stackTrace}) : super._();
 
   @override
   final ApiException error;
   @override
-  final StackTrace stackTrace;
+  final StackTrace? stackTrace;
 
   @override
   String toString() {
@@ -172,7 +171,7 @@ class _$FailureImpl<T> extends Failure<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T data) success,
-    required TResult Function(ApiException error, StackTrace stackTrace)
+    required TResult Function(ApiException error, StackTrace? stackTrace)
         failure,
   }) {
     return failure(error, stackTrace);
@@ -182,7 +181,7 @@ class _$FailureImpl<T> extends Failure<T> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T data)? success,
-    TResult? Function(ApiException error, StackTrace stackTrace)? failure,
+    TResult? Function(ApiException error, StackTrace? stackTrace)? failure,
   }) {
     return failure?.call(error, stackTrace);
   }
@@ -191,7 +190,7 @@ class _$FailureImpl<T> extends Failure<T> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T data)? success,
-    TResult Function(ApiException error, StackTrace stackTrace)? failure,
+    TResult Function(ApiException error, StackTrace? stackTrace)? failure,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -226,9 +225,9 @@ class _$FailureImpl<T> extends Failure<T> {
 abstract class Failure<T> extends Result<T> {
   const factory Failure(
       {required final ApiException error,
-      required final StackTrace stackTrace}) = _$FailureImpl<T>;
+      final StackTrace? stackTrace}) = _$FailureImpl<T>;
   const Failure._() : super._();
 
   ApiException get error;
-  StackTrace get stackTrace;
+  StackTrace? get stackTrace;
 }

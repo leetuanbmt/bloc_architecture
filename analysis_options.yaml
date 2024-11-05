@@ -14,6 +14,7 @@ linter:
     avoid_print: true
     prefer_single_quotes: true
     avoid_function_literals_in_foreach_calls: false
+    avoid_annotating_with_dynamic: true
     always_declare_return_types: true
     unnecessary_new: true
     avoid_empty_else: true
@@ -48,31 +49,4 @@ linter:
     no_duplicate_case_values: true
     sort_constructors_first: true
     no_leading_underscores_for_local_identifiers: true
-
-dart_code_metrics:
-  anti-patterns:
-    - long-method
-    - long-parameter-list
-  metrics:
-    cyclomatic-complexity: 20
-    maximum-nesting-level: 5
-    number-of-parameters: 4
-    source-lines-of-code: 50
-  metrics-exclude:
-    - test/**
-  rules:
-    - newline-before-return
-    - no-boolean-literal-compare
-    - no-empty-block
-    - prefer-trailing-comma
-    - prefer-conditional-expressions
-    - no-equal-then-else
-    - prefer-match-file-name
-    - avoid-unused-parameters
-    - member-ordering:
-        widgets-order:
-          - init-state-method
-          - did-change-dependencies-method
-          - did-update-widget-method
-          - build-method
-          - dispose-method
+    avoid_void_async: true
