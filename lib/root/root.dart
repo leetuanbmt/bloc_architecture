@@ -1,13 +1,12 @@
 import 'package:flutter/services.dart';
 
-import '../blocs/authentication/authentication_bloc.dart';
-import '../blocs/common/common_bloc.dart';
-import '../blocs/preferences/preferences_bloc.dart';
+import '../core/common/common/common_bloc.dart';
 import '../core/config.dart';
 import '../core/routes/app_routes.dart';
 import '../core/services/injection_container.dart';
 import '../core/services/lifecycle_app.dart';
-import '../presentation/widgets/indicators/loading_indicator.dart';
+import '../features/auth/presentation/bloc/auth_bloc.dart';
+import '../widgets/indicators/loading_indicator.dart';
 
 class RootApp extends HookWidget {
   const RootApp({super.key});
@@ -16,21 +15,22 @@ class RootApp extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(
       () {
+        getIt<CommonBloc>().add(const CommonInitial());
+        getIt<AuthBloc>().add(const AuthIsUserLoggedIn());
+        lifecycleApp();
+
         /// set the system ui mode to edge to edge
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
         /// set the preferred orientations to portrait up
         SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        getIt<PreferencesBloc>().add(const PreferencesEvent.initial());
-        getIt<AuthenticationBloc>().add(const AuthenticationEvent.check());
-        lifecycleApp();
         return;
       },
       [],
     );
-    return BlocBuilder<PreferencesBloc, PreferencesState>(
-      builder: (context, state) {
-        final themeMode = state.themeMode;
+    return BlocSelector<CommonBloc, CommonState, ThemeMode>(
+      selector: (state) => state.themeMode,
+      builder: (context, themeMode) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
@@ -46,9 +46,10 @@ class RootApp extends HookWidget {
           child: MaterialApp.router(
             key: globalKey,
             debugShowCheckedModeBanner: false,
-            title: Configs.appName,
+            showPerformanceOverlay: false,
             themeMode: themeMode,
-            theme: theme(context),
+            theme: lightTheme(context),
+            darkTheme: darkTheme(context),
             locale: context.locale,
             supportedLocales: context.supportedLocales,
             localizationsDelegates: context.localizationDelegates,

@@ -10,8 +10,6 @@ const hintColor = Color(0xffBBBABA);
 
 const greyText = Color(0xff949CA9);
 
-const background = Color(0xffF9F9F9);
-
 const blue = Color(0xff4983cf);
 
 LinearGradient buttonGradient = const LinearGradient(
@@ -32,15 +30,14 @@ const darkStatusBar = SystemUiOverlayStyle(
 );
 // Neutral Variant/Neutral 30
 
-ThemeData theme(BuildContext context) {
+ThemeData lightTheme(BuildContext context) {
   final baseTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: primary,
-    scaffoldBackgroundColor: background,
+    scaffoldBackgroundColor: const Color(0xffF9F9F9),
     extensions: const <ThemeExtension<dynamic>>[
       AppColors(
         labelColor: Colors.black,
-        background: Color(0xfff2f4f5),
         titleColor: Color(0xff434343),
         subtitleColor: Color(0xff848484),
       ),
@@ -70,6 +67,47 @@ ThemeData theme(BuildContext context) {
     ),
   );
 
+  return baseTheme.copyWith(
+    textTheme: GoogleFonts.interTextTheme(baseTheme.textTheme),
+  );
+}
+
+ThemeData darkTheme(BuildContext context) {
+  final baseTheme = ThemeData(
+    brightness: Brightness.dark,
+    primaryColor: primary,
+    scaffoldBackgroundColor: const Color(0xff1a1a1a),
+    extensions: const <ThemeExtension<dynamic>>[
+      AppColors(
+        labelColor: Colors.white,
+        titleColor: Color(0xffe0e0e0),
+        subtitleColor: Color(0xff848484),
+      ),
+    ],
+    appBarTheme: AppBarTheme(
+      systemOverlayStyle: lightStatusBar,
+      titleTextStyle: GoogleFonts.inter(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      backgroundColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      centerTitle: true,
+    ),
+    colorScheme: const ColorScheme.dark().copyWith(
+      primary: primary,
+      error: error,
+    ),
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (_) {
+        return const Icon(
+          Icons.keyboard_arrow_left,
+          size: 28,
+        );
+      },
+    ),
+  );
   return baseTheme.copyWith(
     textTheme: GoogleFonts.interTextTheme(baseTheme.textTheme),
   );

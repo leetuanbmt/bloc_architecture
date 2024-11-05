@@ -1,22 +1,25 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import '../../blocs/authentication/authentication_bloc.dart';
-import '../../blocs/common/common_bloc.dart';
-import '../../blocs/preferences/preferences_bloc.dart';
-import '../../data/datasource/auth_local_data_source.dart';
-import '../../data/datasource/auth_remote_data_source.dart';
-import '../../data/datasource/user_remote_data_source.dart';
-import '../../data/repositories/authentication_repository_impl.dart';
-import '../../data/repositories/user_repository_impl.dart';
-import '../../domain/repositories/authentication_repository.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../../domain/usecases/create_user.dart';
-import '../../domain/usecases/get_users.dart';
-import '../../domain/usecases/login_user.dart';
-import '../../domain/usecases/logout_user.dart';
+import '../../features/auth/data/datasource/auth_local_data_source.dart';
+import '../../features/auth/data/datasource/auth_remote_data_source.dart';
+import '../../features/auth/data/repositories/authentication_repository_impl.dart';
+import '../../features/auth/domain/repositories/authentication_repository.dart';
+import '../../features/auth/domain/usecases/auth_check.dart';
+import '../../features/auth/domain/usecases/auth_login.dart';
+import '../../features/auth/domain/usecases/auth_logout.dart';
+import '../../features/auth/domain/usecases/auth_sign_up.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/users/data/datasource/user_remote_data_source.dart';
+import '../../features/users/data/repositories/user_repository_impl.dart';
+import '../../features/users/domain/repositories/user_repository.dart';
+import '../../features/users/domain/usecases/get_users.dart';
+import '../common/app_user/app_user_cubit.dart';
+import '../common/common/common_bloc.dart';
 import '../config.dart';
+import '../network/connection_checker.dart';
 import '../utilities/preferences.dart';
 import 'auth_service.dart';
 import 'user_service.dart';
@@ -55,11 +58,11 @@ final Dio dio = Dio(
   );
 
 /// Initializes the dependency injection container.
-void init() async {
-  registerBlocs();
-  registerUseCases();
-  registerRepositories();
+void initInjection() {
   registerExternal();
+  registerBlocs();
+  registerAuthUseCases();
+  registerRepositories();
   registerUserManagement();
 }
 
@@ -67,30 +70,42 @@ void init() async {
 void registerBlocs() {
   getIt
     ..registerLazySingleton(() => CommonBloc())
-    ..registerLazySingleton(() => PreferencesBloc())
+    ..registerLazySingleton(() => AppUserCubit())
     ..registerLazySingleton(
-      () => AuthenticationBloc(getIt<LogoutUser>()),
+      () => AuthBloc(
+        authSignUp: getIt(),
+        authLogin: getIt(),
+        authLogout: getIt(),
+        authCheck: getIt(),
+        appUserCubit: getIt(),
+      ),
     );
 }
 
 /// Registers all use cases in the dependency injection container.
-void registerUseCases() {
+void registerAuthUseCases() {
   getIt
-    ..registerLazySingleton(() => LoginUser(getIt()))
-    ..registerLazySingleton(() => LogoutUser(getIt()));
+    ..registerLazySingleton(() => AuthSignUp(getIt()))
+    ..registerLazySingleton(() => AuthLogin(getIt()))
+    ..registerLazySingleton(() => AuthLogout(getIt()))
+    ..registerLazySingleton(() => AuthCheck(getIt()));
 }
 
 /// Registers all repositories in the dependency injection container.
 void registerRepositories() {
   getIt
     ..registerLazySingleton<AuthenticationRepository>(
-      () => AuthenticationRepositoryImpl(getIt(), getIt()),
+      () => AuthenticationRepositoryImpl(
+        getIt<AuthRemoteDataSource>(),
+        getIt<AuthLocalDataSource>(),
+        getIt<ConnectionChecker>(),
+      ),
     )
     ..registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSource(getIt<AuthService>()),
     )
     ..registerLazySingleton<AuthLocalDataSource>(
-      () => AuthLocalDataSource(getIt()),
+      () => const AuthLocalDataSource(),
     );
 }
 
@@ -100,7 +115,11 @@ void registerExternal() {
     ..registerLazySingleton(() => secureStorage)
     ..registerLazySingleton(() => dio)
     ..registerLazySingleton(() => AuthService(dio))
-    ..registerLazySingleton(() => UserService(dio));
+    ..registerLazySingleton(() => UserService(dio))
+    ..registerLazySingleton(() => InternetConnection())
+    ..registerLazySingleton<ConnectionChecker>(
+      () => ConnectionCheckerImpl(getIt()),
+    );
 }
 
 /// Registers all user management dependencies in the dependency injection container.
@@ -112,6 +131,5 @@ void registerUserManagement() {
     ..registerLazySingleton<UserRepository>(
       () => UserRepositoryImpl(getIt<UserRemoteDataSource>()),
     )
-    ..registerLazySingleton(() => CreateUser(getIt<UserRepository>()))
     ..registerLazySingleton(() => GetUsers(getIt<UserRepository>()));
 }

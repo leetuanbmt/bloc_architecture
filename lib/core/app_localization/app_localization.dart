@@ -24,10 +24,16 @@ class AppLocalizationController extends ChangeNotifier {
   }) {
     _supportedLocales = supportedLocales;
     _fallbackLocale = fallbackLocale;
-    if (startLocale != null) {
+    if (_savedLocale == null && startLocale != null) {
       _locale = selectLocaleFrom(
         supportedLocales,
         startLocale,
+        fallbackLocale: fallbackLocale,
+      );
+    } else if (saveLocale && _savedLocale != null) {
+      _locale = selectLocaleFrom(
+        supportedLocales,
+        _savedLocale!,
         fallbackLocale: fallbackLocale,
       );
     } else {

@@ -1,6 +1,6 @@
 import 'package:hive_flutter/adapters.dart';
 
-import '../../blocs/base/mixin/persisted_mixin.dart';
+import '../common/base/mixin/persisted_mixin.dart';
 
 const hiveBoxes = [
   {'name': 'settings', 'limit': false},

@@ -18,19 +18,6 @@ class Result<T> with _$Result<T> {
 
   const factory Result.failure({
     required ApiException error,
-    required StackTrace stackTrace,
+    StackTrace? stackTrace,
   }) = Failure<T>;
-
-  static ResultFuture<T> guardFuture<T>(Future<T> Function() future) async {
-    try {
-      return Result.success(await future());
-    } on ApiException catch (e, stackTrace) {
-      return Result.failure(error: e, stackTrace: stackTrace);
-    } catch (e, stackTrace) {
-      return Result.failure(
-        error: ApiException.handleError(e.toString()),
-        stackTrace: stackTrace,
-      );
-    }
-  }
 }
